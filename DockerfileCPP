@@ -1,0 +1,7 @@
+RUN apt-get update && apt-get install -y g++
+# Or any preferred Python version.
+ADD env/main.cpp .
+RUN g++ -o main *.cpp
+CMD ["c++", "./main.cpp"]
+
+

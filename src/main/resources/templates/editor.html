@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Runner</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/editor/editor.main.css">
+    <style>
+        #editor {
+            width: 800px;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+
+ <h1>Code Runner</h1>
+        <div id="editor"></div>
+        <br>
+        <button type="submit" id="run-button">Run</button>
+        <input type="hidden" id="language-input" th:value="${language}">
+        <pre id="output"></pre>
+
+
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/loader.js"></script>
+<script>
+    require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs' }});
+    require(['vs/editor/editor.main'], function() {
+
+        const language = document.getElementById("language-input").value;
+        let initialValue;
+        if (language === 'python') {
+            initialValue = 'print("hello world")';
+        } else if (language === 'java') {
+            initialValue = 'public class Main {\n' +
+                '  public static void main(String[] args) {\n' +
+                '    System.out.println("Hello world!");\n' +
+                '  }\n';
+        } else if (language === 'c++') {
+            initialValue = '#include <iostream>\n' +
+                '\n' +
+                'int main() {\n' +
+                '  std::cout << "Hello World!\\n";\n' +
+                '}';
+        }
+        else {
+            initialValue = "// Unsupported language"; // Handle unsupported languages
+        }
+
+        var editor = monaco.editor.create(document.getElementById('editor'), {
+            value: initialValue,
+            language : 'python'
+        });
+
+
+        document.getElementById("run-button").addEventListener("click", function() {
+            console.log("button clicked")
+            const code = editor.getValue(); // Get code from editor
+            console.log("fetched code")
+            const language = document.getElementById("language-input").value;
+            console.log("fetched language " + language)
+
+            if(language === 'python'){
+            fetch('/api/code-runner/python', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'code=' + encodeURIComponent(code) + '&language=' + encodeURIComponent(language)
+            })
+                .then(response => {
+                    // Handle response from backend (e.g., display output)
+                    response.text().then(data => {
+                        document.getElementById("output").textContent = data;
+                    });
+                })
+            }else if(language === 'c++'){
+                fetch('/api/code-runner/c++', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'code=' + encodeURIComponent(code) + '&language=' + encodeURIComponent(language)
+                })
+                    .then(response => {
+                        // Handle response from backend (e.g., display output)
+                        response.text().then(data => {
+                            document.getElementById("output").textContent = data;
+                        });
+                    })
+            }else if(language === 'java'){
+                fetch('/api/code-runner/java', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'code=' + encodeURIComponent(code) + '&language=' + encodeURIComponent(language)
+                })
+                    .then(response => {
+                        // Handle response from backend (e.g., display output)
+                        response.text().then(data => {
+                            document.getElementById("output").textContent = data;
+                        });
+                    })
+            }
+
+        });
+
+    });
+</script>
+</body>
+</html>
