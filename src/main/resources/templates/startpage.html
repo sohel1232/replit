@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Replit</title>
+    <style>
+        body
+        {
+            background-color:rgb(11,20,25) ;
+        }
+        header{
+            width: 100%;
+            max-width: 90%;
+            margin: 20px;
+            display: flex;
+             flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            justify-items: center;
+            gap: 1150px;
+        }
+        .login
+        {
+            display: flex;
+            flex-direction: row;
+            gap:30px;
+        }
+        .login > div >form> input{
+            width: 120px;
+            height: 40px;
+            background-color: rgb(11,20,25);
+            color:white;
+            border: 0.5px solid black;
+            border-radius: 2px;
+        }
+        .login > div >form> input:hover{
+            background-color: rgb(43,62,72);
+        }
+        .content {
+            max-width: 90%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            justify-items: center;
+            align-items: center;
+            margin-left: 40px;
+
+        }
+        .content>.idea{
+            max-width: 70%;
+            width: 100%;
+            height: 200px;
+        }
+        .content > .idea > h2{
+            text-align: center;
+            color:white;
+            font-family: ABCDiatype,sans-serif;
+            font-size:95px;
+            font-weight: lighter;
+            transform: scaleY(1.2);
+        }
+       .content > .text{
+           max-width: 50%;
+           width: 80%;
+       }
+        .content > .text> h2
+        {
+            color:white;
+            text-align: center;
+            font-weight: 112;
+            font-family:ABCDiatype,sans-serif ;
+        }
+        .content>.button >form> input
+        {
+            font-size: 20px;
+            width: 160px;
+            height: 50px;
+            transform: scaleY(1.0);
+            background-color: orangered;
+            color: white;
+            border-radius: 7.5px;
+            border: 0.5px solid black;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div>
+        <img style="width: 112px; height: 46px; margin: 50px" src="replit.png" alt="Description of the image">
+    </div>
+    <div class = "login">
+        <div>
+            <form th:action="@{/login}" method="get">
+                <input type="submit" value="Login">
+            </form>
+        </div>
+        <div>
+            <form th:action="@{/home}">
+                <input type="submit" value="Start building">
+            </form>
+        </div>
+    </div>
+    <div class = "login">
+
+    </div>
+</header>
+<section class = "content">
+    <div class = "idea">
+        <h2>
+            Idea to software, fast
+        </h2>
+    </div>
+    <div class = "text">
+        <h2>Replit is an AI-driven software creation platform where everyone can build, share, and ship software fast.</h2>
+    </div>
+    <div class="button">
+        <form th:action="${home}">
+            <input type="submit" value="Start building">
+        </form>
+    </div>
+</section>
+</body>
+</html>
