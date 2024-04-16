@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile</title>
+</head>
+<body>
+    <div></div>
+
+    <div>
+
+        <div>
+            <form th:action="@{/new-replet}">
+                <button type="submit">Publish a replit</button>
+            </form>
+        </div>
+
+        <div>
+            <h2>List of Replies:</h2>
+            <ul>
+                <li th:each="replit : ${replits}">
+                    <form th:action="@{/update-replit}" method="post">
+                        <input type="hidden" name="replitId" th:value="${replit.id}">
+                        <input th:text="${replit.name} + ' ' + ${replit.updatedAt}" type="submit"  >
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</body>
+</html>

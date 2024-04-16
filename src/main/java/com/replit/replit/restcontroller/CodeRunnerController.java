@@ -2,6 +2,9 @@ package com.replit.replit.restcontroller;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerCmd;
+import com.replit.replit.entity.Replit;
+import com.replit.replit.repository.ReplitRepository;
+import com.replit.replit.service.ReplitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,23 +21,35 @@ import java.io.InputStreamReader;
 @RequestMapping("/api/code-runner")
 public class CodeRunnerController {
 
+     ReplitService replitService;
+
+    public CodeRunnerController(ReplitService replitService) {
+        this.replitService = replitService;
+    }
+
     @PostMapping("/python")
-    public String executeCodePython(@RequestParam String code, @RequestParam String language, Model model) {
+    public String executeCodePython(@RequestParam String code,
+                                    @RequestParam String language,
+                                    @RequestParam String replitName,
+                                    Model model) {
         System.out.println("Inside execute code with language: " + language);
         try {
+            Replit replit = replitService.findByName(replitName);
+            replit.setCode(code);
+            System.out.println("Inside api. replit found with name : " + replit);
             FileWriter writer = new FileWriter(  "env/main.py");
             writer.write(code);
             writer.close();
 
             String workingDir = System.getProperty("user.dir");
 
-            ProcessBuilder buildProcess = new ProcessBuilder("docker", "build", "-t", "pc", "-f", "Dockerfile", workingDir);
+            ProcessBuilder buildProcess = new ProcessBuilder("docker", "build", "-t", "pc", "-f", "DockerfilePython", workingDir);
             buildProcess.start().waitFor(); // Assuming build success, not capturing output
             System.out.println("building complete");
 
 
             // Run the image and capture output
-            ProcessBuilder runProcess = new ProcessBuilder("docker", "run", "pc");
+            ProcessBuilder runProcess = new ProcessBuilder("docker", "run", "--name", "pc_container", "pc");
             runProcess.redirectOutput(ProcessBuilder.Redirect.PIPE); // Capture standard output
             Process run = runProcess.start();
 
@@ -60,6 +75,17 @@ public class CodeRunnerController {
             System.out.println("The output for the code is : " + runOutput);
 
             model.addAttribute("output" , runOutput);
+            
+            ProcessBuilder stopProcess = new ProcessBuilder("docker", "stop", "pc_container");
+            stopProcess.start().waitFor(); // Assuming success, not capturing output
+            ProcessBuilder removeProcess = new ProcessBuilder("docker", "rm", "pc_container");
+            removeProcess.start().waitFor(); // Assuming success, not capturing output
+            
+            ProcessBuilder deleteImageProcess = new ProcessBuilder("docker", "rmi", "pc");
+            deleteImageProcess.start().waitFor(); // Assuming deletion success, not capturing output
+            System.out.println("Image deletion complete");
+
+            replitService.save(replit);
             return runOutput.toString();
         } catch (IOException e) {
             return e.getMessage();
@@ -75,6 +101,7 @@ public class CodeRunnerController {
             FileWriter writer = new FileWriter(  "env/main.cpp");
             writer.write(code);
             writer.close();
+            System.out.println("file wiritng done");
 
             String workingDir = System.getProperty("user.dir");
 
@@ -110,6 +137,7 @@ public class CodeRunnerController {
             System.out.println("The output for the code is : " + runOutput);
 
             model.addAttribute("output" , runOutput);
+            
             return runOutput.toString();
         } catch (IOException e) {
             return e.getMessage();
@@ -122,7 +150,7 @@ public class CodeRunnerController {
     public String executeCodeJava(@RequestParam String code, @RequestParam String language, Model model){
         System.out.println("Inside execute code with language: " + language);
         try {
-            FileWriter writer = new FileWriter(  "env/Main.java");
+            FileWriter writer = new FileWriter(  "env/main.java");
             writer.write(code);
             writer.close();
 
@@ -160,6 +188,16 @@ public class CodeRunnerController {
             System.out.println("The output for the code is : " + runOutput);
 
             model.addAttribute("output" , runOutput);
+
+            ProcessBuilder stopProcess = new ProcessBuilder("docker", "stop", "pc_container");
+            stopProcess.start().waitFor(); // Assuming success, not capturing output
+            ProcessBuilder removeProcess = new ProcessBuilder("docker", "rm", "pc_container");
+            removeProcess.start().waitFor(); // Assuming success, not capturing output
+
+            ProcessBuilder deleteImageProcess = new ProcessBuilder("docker", "rmi", "pc");
+            deleteImageProcess.start().waitFor(); // Assuming deletion success, not capturing output
+            System.out.println("Image deletion complete");
+
             return runOutput.toString();
         } catch (IOException e) {
             return e.getMessage();

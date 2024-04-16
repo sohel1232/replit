@@ -6,20 +6,68 @@
     <title>Code Runner</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/editor/editor.main.css">
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0E1117; /* Dark background color */
+            color: #D7D7D7; /* Light text color */
+            font-family: Arial, sans-serif;
+        }
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        #toolbar {
+            margin-bottom: 10px;
+        }
+        #run-button {
+            background-color: #28A745; /* Green color */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            outline: none; /* Remove button outline */
+        }
+        #editor-container {
+            display: flex;
+            width: 100%;
+            height: calc(100vh - 170px); /* Adjusted height */
+        }
         #editor {
-            width: 800px;
-            height: 600px;
+            width: 50%;
+            height: 100%;
+            background-color: #1E1E1E; /* Darker background color */
+            border-right: 2px solid #D7D7D7; /* Editor border */
+        }
+        #output {
+            width: 50%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: #1E1E1E; /* Darker background color */
+            border-left: 2px solid #D7D7D7; /* Output border */
         }
     </style>
 </head>
 <body>
 
- <h1>Code Runner</h1>
-        <div id="editor"></div>
-        <br>
-        <button type="submit" id="run-button">Run</button>
-        <input type="hidden" id="language-input" th:value="${language}">
-        <pre id="output"></pre>
+    <div id="container">
+        <h1 style="margin-top: 0;">Code Runner</h1>
+        <div id="toolbar">
+            <button id="run-button">Run</button>
+        </div>
+        <input type="hidden" id="language-input" th:value="${replit.getLanguage()}">
+        <input type="hidden" id="replitName" th:value="${replit.getName()}">
+        <input type="hidden" id="replit-code" th:value="${replit.getCode()}">
+        <div id="editor-container">
+            <div id="editor"></div>
+            <pre id="output"></pre>
+        </div>
+    </div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs/loader.js"></script>
@@ -29,29 +77,34 @@
 
         const language = document.getElementById("language-input").value;
         let initialValue;
-        if (language === 'python') {
-            initialValue = 'print("hello world")';
-        } else if (language === 'java') {
-            initialValue = 'public class Main {\n' +
-                '  public static void main(String[] args) {\n' +
-                '    System.out.println("Hello world!");\n' +
-                '  }\n';
-        } else if (language === 'c++') {
-            initialValue = '#include <iostream>\n' +
-                '\n' +
-                'int main() {\n' +
-                '  std::cout << "Hello World!\\n";\n' +
-                '}';
-        }
-        else {
-            initialValue = "// Unsupported language"; // Handle unsupported languages
+
+        const replitCode = document.getElementById("replit-code").value;
+        if (replitCode) {
+            initialValue = replitCode;
+        } else {
+            if (language === 'python') {
+                initialValue = 'print("hello world")';
+            }else if(language === 'java'){
+                initialValue = 'public class Main {\n' +
+                    '  public static void main(String[] args) {\n' +
+                    '    System.out.println("Hello world!");\n' +
+                    '  }\n';
+            } else if (language === 'c++') {
+                initialValue = '#include <iostream>\n' +
+                    '\n' +
+                    'int main() {\n' +
+                    '  std::cout << "Hello World!\\n";\n' +
+                    '}';
+            } else {
+                initialValue = "// Unsupported language"; // Handle unsupported languages
+            }
         }
 
         var editor = monaco.editor.create(document.getElementById('editor'), {
             value: initialValue,
-            language : 'python'
+            language : 'cpp',
+            theme: 'vs-dark'
         });
-
 
         document.getElementById("run-button").addEventListener("click", function() {
             console.log("button clicked")
@@ -59,6 +112,7 @@
             console.log("fetched code")
             const language = document.getElementById("language-input").value;
             console.log("fetched language " + language)
+            const replitName = document.getElementById("replitName").value;
 
             if(language === 'python'){
             fetch('/api/code-runner/python', {
@@ -66,7 +120,7 @@
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: 'code=' + encodeURIComponent(code) + '&language=' + encodeURIComponent(language)
+                body: 'code=' + encodeURIComponent(code) + '&language=' + encodeURIComponent(language) + '&replitName=' + encodeURIComponent(replitName)
             })
                 .then(response => {
                     // Handle response from backend (e.g., display output)
