@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Collection;
@@ -42,5 +40,15 @@ public class LoginController {
         user.setRoles(collectionOfRoles);
         userService.save(user);
         return "login";
+    }
+    @GetMapping("/signUp")
+    public String signUp()
+    {
+        return "signup";
+    }
+    @GetMapping("/createUser")
+    public String createUser()
+    {
+        return "createnew";
     }
 }

@@ -36,7 +36,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(configurer ->
                         configurer
-                                .requestMatchers("/","/customLogin","/registerUser").permitAll()
+                                .requestMatchers("/","/customLogin","/registerUser","/signUp","/createUser").permitAll()
 //                                .requestMatchers(HttpMethod.POST,"/api/filter/**").permitAll()
 //                                .requestMatchers(HttpMethod.GET,"/api/Posts").permitAll()
 //                                .requestMatchers(HttpMethod.PUT,"/api/Posts").hasAnyRole("AUTHOR","ADMIN")

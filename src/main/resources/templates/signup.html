@@ -73,20 +73,6 @@
             margin: 20px 0;
             background-color: slategrey;
         }
-        input{
-            width: 300px;
-            height: 50px;
-            border-radius: 5px;
-            border: 0.5px solid black;
-        }
-        form{
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .button{
-            background-color: rgb(245,181,151);
-        }
 
     </style>
 </head>
@@ -98,29 +84,23 @@
     </div>
     <div class="second-half">
         <!-- Login Form -->
-        <div class = "content">
-           <h2>Log in to your account</h2>
-            <form th:action="@{/authenticateTheUser}"
-                  method="POST" >
-                <input type="text" placeholder="email" name="username">
-                <input type="password" placeholder="password" name="password">
-                <input class="button" type="submit" value="Log in">
-            </form>
-            <br><br>
-            <a  th:href="@{/oauth2/authorization/google}" target="_blank">
-                <div class="google-button">
-                    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_92x30dp.png" alt="Google Logo" class="google-logo">
-                    Continue with Google
-                </div>
-            </a>
+       <div class = "content">
+           <h2>Create a Replit Account</h2>
+           <a th:href="@{/oauth2/authorization/google}"  target="_blank">
+               <div class="google-button">
+                   <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_92x30dp.png" alt="Google Logo" class="google-logo">
+                   Continue with Google
+               </div><br><br>
+           </a>
+           <a th:href="@{/createUser}" style="color: orangered"> continue with email </a>
+           <hr>
+           <p style="font-size: 12.5px ; width: 220px" >
+               By continuing, you agree to Replit's
+               <b>Terms of Service</b> and <b>Privacy Policy</b>
+           </p>
+           <p style="font-size: 12.5px ; width: 220px" >Already have an account? <a th:href="@{/customLogin}">Log in</a></p>
 
-            <hr>
-            <p style="font-size: 12.5px ; width: 220px" >
-                By continuing, you agree to Replit's
-                <b>Terms of Service</b> and <b>Privacy Policy</b>
-            </p>
-            <p style="font-size: 12.5px ; width: 220px" >don't have an account? <a th:method="get" th:href="@{/signUp}">Sign up</a></p>
-        </div>
+       </div>
     </div>
 </div>
 </body>
