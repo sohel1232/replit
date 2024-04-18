@@ -1,15 +1,95 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Home</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <form th:action="@{/replit/new-replet}">-->
+<!--        <button>Create Repl</button>-->
+<!--    </form>-->
+<!--    <form th:action="@{/user/profile}">-->
+<!--        <button>my replits</button>-->
+<!--    </form>-->
+<!--</body>-->
+<!--</html>-->
+
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
+    <style>
+        .sidebar {
+            height: 100vh;
+            width: 230px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgb(43, 50, 69);
+            padding-top: 20px;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 0px;
+            border: 1px solid #888;
+            width: auto; /* Set width to auto initially */
+            max-width: 33%;
+        }
+        #logoutbutton{
+            position:absolute;
+            right:15px;
+        }
+    </style>
 </head>
-<body>
-    <form th:action="@{/new-replet}">
-        <button>Create Repl</button>
-    </form>
-    <form th:action="@{/user/profile}">
-        <button>my replits</button>
-    </form>
+<body style="background-color: rgb(14, 21, 37);">
+<div class="sidebar">
+    <div class="somebox">
+        <div><a href="#" onclick="openModal()"><img src="/createrepl.png" ></a></div>
+        <div><a href="/"><img src="/home.png" ></a></div>
+        <div><a href="/user/profile"><img src="/myrepl.png" ></a></div>
+    </div>
+</div>
+
+<div id="repletModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div id="repletFormContainer"></div>
+    </div>
+</div>
+<div id="logoutbutton"><a href="/logout"><img src="/logout.png" style="width: 70px; height: 60px;"></a></div>
+
+<script>
+    function openModal() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("repletFormContainer").innerHTML = this.responseText;
+                document.getElementById("repletModal").style.display = "block";
+            }
+        };
+        xhttp.open("GET", "/replit/new-replet", true);
+        xhttp.send();
+    }
+
+    function closeModal() {
+        document.getElementById("repletModal").style.display = "none";
+    }
+</script>
 </body>
 </html>

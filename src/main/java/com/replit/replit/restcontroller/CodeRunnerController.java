@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/code-runner")
@@ -36,6 +37,7 @@ public class CodeRunnerController {
         try {
             Replit replit = replitService.findByName(replitName);
             replit.setCode(code);
+            replit.setUpdatedAt(LocalDateTime.now());
             System.out.println("Inside api. replit found with name : " + replit);
             FileWriter writer = new FileWriter(  "env/main.py");
             writer.write(code);
@@ -94,10 +96,15 @@ public class CodeRunnerController {
         }
     }
 
-    @PostMapping("c++")
-    public String executeCodeCPP(@RequestParam String code, @RequestParam String language, Model model){
+    @PostMapping("cpp")
+    public String executeCodeCPP(@RequestParam String code, @RequestParam String language, Model model,@RequestParam String replitName){
         System.out.println("Inside execute code with language: " + language);
         try {
+            System.out.println("Inside cpp execution");
+            Replit replit = replitService.findByName(replitName);
+            replit.setCode(code);
+            replit.setUpdatedAt(LocalDateTime.now());
+            System.out.println("Inside api. replit found with name : " + replit);
             FileWriter writer = new FileWriter(  "env/main.cpp");
             writer.write(code);
             writer.close();
@@ -137,7 +144,7 @@ public class CodeRunnerController {
             System.out.println("The output for the code is : " + runOutput);
 
             model.addAttribute("output" , runOutput);
-            
+            replitService.save(replit);
             return runOutput.toString();
         } catch (IOException e) {
             return e.getMessage();
@@ -147,10 +154,14 @@ public class CodeRunnerController {
     }
 
     @PostMapping("java")
-    public String executeCodeJava(@RequestParam String code, @RequestParam String language, Model model){
+    public String executeCodeJava(@RequestParam String code, @RequestParam String language, Model model,@RequestParam String replitName){
         System.out.println("Inside execute code with language: " + language);
         try {
-            FileWriter writer = new FileWriter(  "env/main.java");
+            Replit replit = replitService.findByName(replitName);
+            replit.setCode(code);
+            replit.setUpdatedAt(LocalDateTime.now());
+            System.out.println("Inside api. replit found with name : " + replit);
+            FileWriter writer = new FileWriter(  "env/Main.java");
             writer.write(code);
             writer.close();
 
@@ -197,7 +208,7 @@ public class CodeRunnerController {
             ProcessBuilder deleteImageProcess = new ProcessBuilder("docker", "rmi", "pc");
             deleteImageProcess.start().waitFor(); // Assuming deletion success, not capturing output
             System.out.println("Image deletion complete");
-
+            replitService.save(replit);
             return runOutput.toString();
         } catch (IOException e) {
             return e.getMessage();

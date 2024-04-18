@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Home</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .replit-box {
+      width: 650px;
+      height: 5rem;
+      background-color: rgb(28,35,50);
+      color: white;
+      margin-bottom: 40px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      border: none;
+    }
+    .one{
+      display: flex;
+      justify-content: space-between;
+      width: 85%;
+    }
+    .replit-box:hover{
+  opacity: 0.5;
+      color:white;
+    }
+    .replit-text {
+      white-space: pre;
+      /*margin-left:20px;*/
+      font-weight: 900;
+    }
+    /* Remove bullets from list items */
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    .three{
+      position:absolute;
+      top:100px;
+      right:200px;
+    }
+    .two{
+      position:absolute;
+      top:10px;
+      right:14px;
+    }
+    body{
+      color:white;
+      background-color: rgb(14, 21, 37);
+    }
+    .one{
+      position:absolute;
+      top:38px;
+      left:260px;
+    }
+    .sidebar {
+      height: 100vh;
+      width: 230px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgb(43, 50, 69);
+      padding-top: 20px;
+      position: absolute;
+      left: 0px;
+      top: 0px;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 0px;
+      border: 1px solid #888;
+      width: auto; /* Set width to auto initially */
+      max-width: 33%; /* Set a maximum width */
+    }
+
+    .replit-time-text{
+      margin-right: 11rem;
+    }
+    .bottom{
+      border: 1px solid red;
+      position:absolute;
+      top:50px;
+      right:200px;
+      display: flex;
+    }
+.replit-upper-box{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+  </style>
+</head>
+<body style="background-color: rgb(14, 21, 37);">
+<div class="main">
+<div class="sidebar">
+  <div class="somebox">
+    <div><a href="#" onclick="openModal()"><img src="/createrepl.png" ></a></div>
+    <div><a href="/"><img src="/home.png" ></a></div>
+    <div><a href="/user/profile"><img src="/myrepl.png" ></a></div>
+  </div>
+</div>
+
+<div id="repletModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div id="repletFormContainer"></div>
+  </div>
+
+</div>
+<div>
+  <div class="one"><h3>Welcome</h3>
+    <button type="submit" class="btn btn-primary" onclick="openModal()">Publish a replit</button>
+  </div>    </div>
+    <div class="three">
+      <h2>List of Replies:</h2>
+      <ul>
+        <li th:each="replit : ${replits}">
+
+          <form th:action="@{/replit/update-replit}" th:method="post">
+            <input type="hidden" name="replitId" th:value="${replit.id}">
+            <button type="submit" class="replit-box">
+              <div class="replit-upper-box">
+                <span class="replit-text" th:text="${replit.name}"></span>
+                <span class="replit-time-text" th:text="${replit.updatedAt}"></span>
+                <span class="" th:text="'...'"></span>
+              </div>
+              <div>
+                <img src="/public.png">
+              </div>
+            </button>
+
+          </form>
+        </li>
+      </ul>
+    </div>
+
+
+</div>
+</div>
+
+<script>
+  function openModal() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("repletFormContainer").innerHTML = this.responseText;
+        document.getElementById("repletModal").style.display = "block";
+      }
+    };
+    xhttp.open("GET", "/replit/new-replet", true);
+    xhttp.send();
+  }
+
+  function closeModal() {
+    document.getElementById("repletModal").style.display = "none";
+  }
+</script>
+</body>
+</html>

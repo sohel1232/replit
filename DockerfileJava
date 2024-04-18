@@ -1,5 +1,13 @@
 FROM openjdk:17
-ADD env/Main.java /app/Main.java
-WORKDIR /app
+
+# Copy the Java source code into the container
+COPY env/Main.java /app/
+
+# Set the working directory
+WORKDIR /app/
+
+# Compile the Java program
 RUN javac Main.java
+
+# Define the command to run the Java program
 CMD ["java", "Main"]

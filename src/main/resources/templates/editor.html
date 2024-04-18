@@ -21,7 +21,7 @@
             height: 100vh;
         }
         #toolbar {
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
         #run-button {
             background-color: #28A745; /* Green color */
@@ -37,35 +37,84 @@
             width: 100%;
             height: calc(100vh - 170px); /* Adjusted height */
         }
-        #editor {
+        #editor-wrapper, #output-wrapper {
+            display: flex;
+            flex-direction: column;
             width: 50%;
             height: 100%;
+
+        }
+        #tab-left, #tab-right {
             background-color: #1E1E1E; /* Darker background color */
+            color: white;
+            padding: 5px 10px;
+            font-size: 14px;
+            border-radius: 5px 5px 0 0;
+            margin-bottom: 10px;
+        }
+        #tab-left {
             border-right: 2px solid #D7D7D7; /* Editor border */
         }
+        #tab-right {
+            border-left: 2px solid #D7D7D7; /* Output border */
+        }
+        #editor {
+            height: calc(100% - 20px); /* Adjusted height */
+            background-color: rgb(14, 21, 37); /* Darker background color */
+        }
         #output {
-            width: 50%;
-            height: 100%;
+            height: calc(100% - 40px); /* Adjusted height */
             overflow-y: auto;
             padding: 10px;
-            background-color: #1E1E1E; /* Darker background color */
-            border-left: 2px solid #D7D7D7; /* Output border */
+            background-color: rgb(14, 21, 37); /* Darker background color */
+        }
+        .anchor{
+            position:absolute;
+            background-image:url("/img.png");
+            background-repeat:no-repeat;
+            background-size:contain;
+            left:20px;
+            top:0px;
+            height:5vh;
+            width:10vw;
+        }
+        #run-button{
+            position:absolute;
+            top:8px;
+        }
+        #back-button{
+            position:absolute;
+            right:10px;
+            top:5px;
+
+        }
+        img{
+            height:60px;
+            width:108px;
+
         }
     </style>
 </head>
 <body>
 
     <div id="container">
-        <h1 style="margin-top: 0;">Code Runner</h1>
         <div id="toolbar">
+            <div class="anchor"></div>
             <button id="run-button">Run</button>
+            <div id="back-button"><a href="/replit/home"><img src="/back.png" ></a></div>
         </div>
         <input type="hidden" id="language-input" th:value="${replit.getLanguage()}">
         <input type="hidden" id="replitName" th:value="${replit.getName()}">
         <input type="hidden" id="replit-code" th:value="${replit.getCode()}">
         <div id="editor-container">
-            <div id="editor"></div>
-            <pre id="output"></pre>
+            <div id="editor-wrapper">
+                <div id="tab-left" th:text="${replit.getLanguage() == 'java' ? 'Main.java' : (replit.getLanguage() == 'cpp' ? 'main.cpp' : 'main.py')}"></div>
+                <div id="editor"></div>
+            </div>
+            <div id="output-wrapper">
+                <div id="tab-right">Console</div>
+                <pre id="output"></pre>
+            </div>
         </div>
     </div>
 
@@ -88,8 +137,8 @@
                 initialValue = 'public class Main {\n' +
                     '  public static void main(String[] args) {\n' +
                     '    System.out.println("Hello world!");\n' +
-                    '  }\n';
-            } else if (language === 'c++') {
+                    '  }}\n';
+            } else if (language === 'cpp') {
                 initialValue = '#include <iostream>\n' +
                     '\n' +
                     'int main() {\n' +
@@ -102,7 +151,7 @@
 
         var editor = monaco.editor.create(document.getElementById('editor'), {
             value: initialValue,
-            language : 'cpp',
+            language : language,
             theme: 'vs-dark'
         });
 
@@ -128,16 +177,15 @@
                         document.getElementById("output").textContent = data;
                     });
                 })
-            }else if(language === 'c++'){
-                fetch('/api/code-runner/c++', {
+            }else if(language === 'cpp'){
+                fetch('/api/code-runner/cpp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
-                    body: 'code=' + encodeURIComponent(code) + '&language=' + encodeURIComponent(language)
+                    body: 'code=' + encodeURIComponent(code) + '&language=' + encodeURIComponent(language) + '&replitName=' + encodeURIComponent(replitName)
                 })
                     .then(response => {
-                        // Handle response from backend (e.g., display output)
                         response.text().then(data => {
                             document.getElementById("output").textContent = data;
                         });
@@ -148,10 +196,9 @@
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
-                    body: 'code=' + encodeURIComponent(code) + '&language=' + encodeURIComponent(language)
+                    body: 'code=' + encodeURIComponent(code) + '&language=' + encodeURIComponent(language) + '&replitName=' + encodeURIComponent(replitName)
                 })
                     .then(response => {
-                        // Handle response from backend (e.g., display output)
                         response.text().then(data => {
                             document.getElementById("output").textContent = data;
                         });

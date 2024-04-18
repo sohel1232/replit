@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,20 +28,13 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public String showProfile(Model model){
-        User currentLoggedInUser = userService.findUserByName("sohel");
+    public String showProfile(Model model,Principal principal){
+        User currentLoggedInUser = userService.getCurrentUser(principal);
         System.out.println("Logged in user : " + currentLoggedInUser);
         List<Replit> replits = replitService.findReplitsByUser(currentLoggedInUser);
         System.out.println("Sohel replits: " + replits);
 
-        Replit replit = new Replit("abc");
-        Replit replit2 = new Replit("cde");
-
-        List<Replit> replitList = new ArrayList<>();
-
-
-
         model.addAttribute("replits" , replits);
-        return "profile";
+        return "display";
     }
 }

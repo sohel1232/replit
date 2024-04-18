@@ -10,9 +10,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/replit")
 public class RepletController {
 
     UserService userService;
@@ -40,7 +41,7 @@ public class RepletController {
                             Model model,
                             Principal principal){
         //User currentLoggedInUser = userService.getCurrentUser(principal);
-        User currentLoggedInUser = userService.findUserByName("sohel");
+        User currentLoggedInUser = userService.getCurrentUser(principal);
 
         Replit replit = new Replit(name,language);
         currentLoggedInUser.getReplits().add(replit);
@@ -61,8 +62,16 @@ public class RepletController {
     @PostMapping("/update-replit")
     public String updateReplit(@RequestParam Integer replitId , Model model){
         Replit replit = replitService.findById(replitId);
+//        LocalDateTime localDateTime = LocalDateTime.now();
+//        replit.setUpdatedAt(localDateTime);
+        System.out.println("Inside update replit, replis is : " + replit);
         model.addAttribute("replit" , replit);
         return "editor";
+    }
+
+    @GetMapping("/myrepl")
+    public String showRepl(){
+        return "display";
     }
 }
 

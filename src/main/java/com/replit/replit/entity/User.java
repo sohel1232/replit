@@ -1,6 +1,8 @@
 package com.replit.replit.entity;
 
 import jakarta.persistence.*;
+
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -11,12 +13,31 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "uname")
     private String name;
 
+    @Column(name = "name")
     private String email;
+
+    @Column(name = "password")
+    private String password;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Collection<Role> roles;
 
     @OneToMany(mappedBy = "user")
     private List<Replit> replits;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public Integer getId() {
         return id;
@@ -48,5 +69,13 @@ public class User {
 
     public void setReplits(List<Replit> replits) {
         this.replits = replits;
+    }
+
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
     }
 }
